@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter_web_api/customer_dto.dart';
 import 'package:flutter_web_api/model.dart';
+import 'package:flutter_web_api/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
