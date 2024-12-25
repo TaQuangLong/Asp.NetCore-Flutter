@@ -8,12 +8,11 @@
 
 ### Setting Up the Backend
 
-1. Navigate to the `NetCoreAndFlutterDemo` directory.
-2. Apply EF migrations:
+1. Apply EF migrations:
     ```sh
     dotnet ef database update
     ```
-3. Run the backend application:
+2. Run the backend application:
     ```sh
     dotnet run
     ```
