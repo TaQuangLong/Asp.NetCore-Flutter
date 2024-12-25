@@ -1,18 +1,20 @@
-﻿using NetCoreAndFlutterDemo.Interfaces;
-using NetCoreAndFlutterDemo.Models;
+﻿using AutoMapper;
+using NetCoreAndFlutterDemo.Domain;
+using NetCoreAndFlutterDemo.Interfaces;
 
 namespace NetCoreAndFlutterDemo.Repository;
 
 public class UnitOfWork: IUnitOfWork
 {
     private readonly ApiDbContext _dbContext;
-
-    public UnitOfWork(ApiDbContext dbContext)
+    private readonly IMapper _mapper;
+    public UnitOfWork(ApiDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
+        _mapper = mapper;
     }
 
-    public ICustomerRepository CustomerRepository => new CustomerRepository(_dbContext);
+    public ICustomerRepository CustomerRepository => new CustomerRepository(_dbContext, _mapper);
     
     public bool HasChanges()
     {

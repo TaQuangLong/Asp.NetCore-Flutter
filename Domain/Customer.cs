@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NetCoreAndFlutterDemo.Models;
+namespace NetCoreAndFlutterDemo.Domain;
 
 public class Customer
 {
@@ -15,4 +15,14 @@ public class Customer
     public string Email { get; set; }
     public string? PhoneNumber { get; set; }
     public string? ZipCode { get; set; }
+
+    public Customer(string firstName, string lastName, string email, string? phoneNumber, string? zipCode)
+    {
+        Id = Guid.NewGuid().ToString();
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+        PhoneNumber = phoneNumber;
+        ZipCode = zipCode;
+    }
 }

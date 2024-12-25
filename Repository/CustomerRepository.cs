@@ -1,35 +1,80 @@
-﻿using NetCoreAndFlutterDemo.DTOs;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+using NetCoreAndFlutterDemo.Domain;
+using NetCoreAndFlutterDemo.DTOs;
 using NetCoreAndFlutterDemo.Interfaces;
-using NetCoreAndFlutterDemo.Models;
 
 namespace NetCoreAndFlutterDemo.Repository;
 
-public class CustomerRepository: ICustomerRepository
+public class CustomerRepository : ICustomerRepository
 {
-    private readonly ApiDbContext _context;
+    private readonly ApiDbContext _dbContext;
+    private readonly IMapper _mapper;
 
-    public CustomerRepository(ApiDbContext context)
+    public CustomerRepository(ApiDbContext dbContext, IMapper mapper)
     {
-        _context = context;
+        _dbContext = dbContext;
+        _mapper = mapper;
     }
 
-    public Task<CustomerDto> GetCustomerById(string id)
+    public async Task<IEnumerable<CustomerDto>> GetAllCutomers()
     {
-        throw new NotImplementedException();
+        var customers = await _dbContext.Customers
+                                                .ProjectTo<CustomerDto>(_mapper.ConfigurationProvider)
+                                                .ToListAsync();
+        return customers;
     }
 
-    public Task Update(CustomerDto customer)
+    public async Task<CustomerDto> GetCustomerByIdOrEmail(string key)
     {
-        throw new NotImplementedException();
+        var customer = await _dbContext.Customers
+            .Where(x => x.Email.Contains(key) || x.Id == key)
+            .ProjectTo<CustomerDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync();
+        
+        return customer;
     }
 
-    public Task Create(CustomerDto customer)
+    public async Task<CustomerDto> GetCustomerById(string id)
     {
-        throw new NotImplementedException();
+        var customer = await _dbContext.Customers.FindAsync(id);
+
+        if (customer == default)
+        {
+            throw new Exception($"Customer not found with Id: {id}");
+        }
+
+        var customerDto = _mapper.Map<CustomerDto>(customer);
+
+        return customerDto;
     }
 
-    public Task Delete(string id)
+    public async Task Update(string id, CustomerDto customer)
     {
-        throw new NotImplementedException();
+        var customerToUpdate = await _dbContext.Customers.FindAsync(id);
+        if (customerToUpdate == default)
+        {
+            throw new Exception($"Customer not found with Id: {id}");
+        }
+
+        customerToUpdate.FirstName = customer.FirstName;
+        customerToUpdate.LastName = customer.LastName;
+        customerToUpdate.Email = customer.Email;
+        customerToUpdate.PhoneNumber = customer.PhoneNumber;
+        customerToUpdate.ZipCode = customer.ZipCode;
+    }
+
+    public async Task Create(CustomerDto dto)
+    {
+        var customer = new Customer(dto.FirstName, dto.LastName, dto.Email, dto.PhoneNumber, dto.ZipCode);
+        
+        await _dbContext.Customers.AddAsync(customer);
+    }
+
+    public async Task Delete(string id)
+    {
+        var customer = await _dbContext.Customers.FindAsync(id);
+
+        _dbContext.Customers.Remove(customer);
     }
 }
