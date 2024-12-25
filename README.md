@@ -19,7 +19,7 @@
 
 ### Setting Up the Frontend
 
-1. Navigate to the `flutter_web_api` directory.
+1. Navigate to the `FlutterApi\flutter_web_api` directory.
 2. Ensure you have an Android emulator created in Android Studio and select this device to use.
 3. Run the Flutter application:
     ```sh
